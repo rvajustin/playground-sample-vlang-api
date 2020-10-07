@@ -1,22 +1,36 @@
 module main
 
-import nedpals.vex.ctx
-import nedpals.vex.server
+import vweb
+
+const (
+	port = 8080
+)
+
+struct App {
+pub mut:
+	vweb vweb.Context
+}
 
 fn main() {
-	mut s := server.new()
-	s.use(fn (req ctx.Req, res ctx.Resp) {
-		println('$req.method $req.path')
-	})
-	s.get('/healthcheck', health_check)
-	s.get('/info', info)
-	s.serve(8080)
+	println('running web app')
+	vweb.run<App>(port)
 }
 
-fn health_check(mut req ctx.Req, mut res ctx.Resp) {
-	res.send('OK', 200)
+pub fn (app App) init_once() {
 }
 
-fn info(mut req ctx.Req, mut res ctx.Resp) {
-	res.send('vlang', 200)
+pub fn (app App) init() {
+}
+
+pub fn (app App) index() {
+}
+
+['/healthcheck']
+fn (mut app App) health_check() vweb.Result {
+	return app.vweb.text('OK')
+}
+
+['/info']
+fn (mut app App) info() vweb.Result {
+	return app.vweb.text('vlang')
 }
